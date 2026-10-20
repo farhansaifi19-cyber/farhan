@@ -1,0 +1,39 @@
+
+name: Build Schwing Stetter APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get project files
+        uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Extract project ZIP
+        run: |
+          unzip -q Schwing_Stetter_Mohali_Android_Project.zip -d project
+
+      - name: Build APK
+        working-directory: project/SchwingStetterAndroid
+        run: gradle assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Schwing-Stetter-Mohali-APK
+          path: project/SchwingStetterAndroid/app/build/outputs/apk/debug/app-debug.apk
